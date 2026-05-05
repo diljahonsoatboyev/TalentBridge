@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentBridge | Iqtidorlar Markazi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* ASOSIY DIZAYN */
+        :root { 
+            --primary: #4f46e5; 
+            --gold: #fbbf24; 
+            --silver: #94a3b8; 
+            --bronze: #d97706;
+            --bg: #f8fafc; 
+            --text: #0f172a; 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        .app-container { display: flex; min-height: 100vh; }
+        
+        /* SIDEBAR - RESPONSIVE MOD */
+        .sidebar { width: 260px; background: #0f172a; color: white; padding: 2rem; position: fixed; height: 100vh; z-index: 50; transition: 0.3s; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 800; margin-bottom: 3rem; color: #818cf8; letter-spacing: -0.5px; }
+        .nav-item { width: 100%; display: flex; align-items: center; gap: 12px; padding: 14px; border: none; background: none; color: #94a3b8; cursor: pointer; border-radius: 15px; font-weight: 600; transition: 0.3s; margin-bottom: 10px; text-align: left; }
+        .nav-item:hover, .nav-item.active { background: #1e293b; color: white; }
+        .nav-item.active { background: var(--primary); box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3); }
+
+        /* MAIN CONTENT - RESPONSIVE MOD */
+        .main-content { margin-left: 260px; padding: 3rem; width: calc(100% - 260px); transition: 0.3s; }
+        
+        /* MEDIA QUERIES - BARCHA GADJETLAR UCHUN */
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 1.5rem 1rem; }
+            .sidebar .logo span, .sidebar .nav-item span, .sidebar div:last-child { display: none; }
+            .sidebar .logo i { margin: 0 auto; }
+            .sidebar .nav-item { justify-content: center; padding: 15px; }
+            .sidebar .nav-item i { margin: 0; }
+            .main-content { margin-left: 80px; width: calc(100% - 80px); padding: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: fixed; bottom: 0; top: auto; padding: 10px; flex-direction: row; display: flex; justify-content: space-around; border-top: 1px solid #1e293b; }
+            .sidebar .logo { display: none; }
+            .sidebar nav { display: flex; width: 100%; justify-content: space-around; }
+            .sidebar .nav-item { margin-bottom: 0; width: auto; flex-direction: column; gap: 5px; font-size: 0.6rem; padding: 8px; }
+            .sidebar .nav-item i { width: 20px; }
+            .main-content { margin-left: 0; width: 100%; padding: 1.5rem; padding-bottom: 80px; }
+            
+            .welcome-section { padding: 2rem; border-radius: 25px; }
+            .welcome-section h1 { font-size: 2rem; }
+            .profile-header-card { flex-direction: column; text-align: center; padding: 2rem; }
+            .profile-stats-grid { grid-template-columns: 1fr; }
+            .filter-panel { flex-direction: column; }
+            .search-box { width: 100% !important; }
+            .news-grid { grid-template-columns: 1fr; }
+        }
+
+        .page { display: none; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* HERO */
+        .welcome-section { background: linear-gradient(135deg, #4f46e5, #6366f1); padding: 4rem; border-radius: 35px; color: white; margin-bottom: 2rem; }
+        .welcome-section h1 { font-size: 3.2rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.1; }
+        .hero-badge { background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; display: inline-block; }
+
+        /* NEWS */
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 1.5rem; }
+        .news-card { background: white; padding: 15px; border-radius: 25px; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.3s; }
+        .news-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); }
+        .news-card img { width: 100%; height: 170px; border-radius: 20px; object-fit: cover; margin-bottom: 15px; }
+
+        /* RATING & TOP-3 */
+        .rank-1 { background: #fef3c7 !important; color: #92400e !important; }
+        .rank-2 { background: #f1f5f9 !important; color: #475569 !important; }
+        .rank-3 { background: #ffedd5 !important; color: #9a3412 !important; }
+        
+        .rank-badge { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-weight: 800; background: #f1f5f9; }
+        .rank-1 .rank-badge { background: var(--gold); color: white; }
+        .rank-2 .rank-badge { background: var(--silver); color: white; }
+        .rank-3 .rank-badge { background: var(--bronze); color: white; }
+
+        .table-container { background: white; border-radius: 25px; border: 1px solid #e2e8f0; overflow-x: auto; margin-top: 1rem; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: #f8fafc; padding: 20px; text-align: left; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        td { padding: 20px; border-bottom: 1px solid #f1f5f9; }
+
+        /* PROFILE */
+        .profile-container { max-width: 900px; margin: 0 auto; }
+        .profile-header-card { background: white; padding: 3rem; border-radius: 35px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 30px; margin-bottom: 2rem; position: relative; overflow: hidden; }
+        .profile-header-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: var(--primary); }
+        .profile-img-large { width: 120px; height: 120px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 35px; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; font-weight: 800; flex-shrink: 0; }
+        .profile-info h2 { font-size: 2rem; font-weight: 800; margin-bottom: 5px; }
+        .profile-info p { color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+
+        .profile-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .p-stat-card { background: white; padding: 2rem; border-radius: 25px; border: 1px solid #e2e8f0; text-align: center; transition: 0.3s; }
+        .p-stat-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .p-stat-card i { color: var(--primary); margin-bottom: 10px; }
+        .p-stat-card strong { font-size: 1.8rem; display: block; margin-top: 5px; }
+        .p-stat-card label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); padding: 20px; }
+        .modal-card { background: white; padding: 35px; border-radius: 30px; width: 100%; max-width: 500px; position: relative; }
+        .close-btn { position: absolute; top: 20px; right: 20px; border: none; background: #f1f5f9; cursor: pointer; padding: 5px; border-radius: 50%; }
+
+        /* FILTERS */
+        .filter-panel { display: flex; gap: 15px; margin-bottom: 20px; }
+        .filter-panel select, .search-box input { flex: 1; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; outline: none; font-weight: 600; font-family: inherit; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div id="modal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()"><i data-lucide="x" style="width:20px;"></i></button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo"><i data-lucide="briefcase"></i> <span>TalentBridge</span></div>
+            <nav>
+                <button onclick="showPage('home')" class="nav-item active" id="n-home"><i data-lucide="layout"></i> <span>Bosh sahifa</span></button>
+                <button onclick="showPage('news')" class="nav-item" id="n-news"><i data-lucide="rocket"></i> <span>Imkoniyatlar</span></button>
+                <button onclick="showPage('rating')" class="nav-item" id="n-rating"><i data-lucide="award"></i> <span>Milliy Reyting</span></button>
+                <button onclick="showPage('profile')" class="nav-item" id="n-profile"><i data-lucide="user"></i> <span>Profilim</span></button>
+            </nav>
+            <div style="margin-top:auto; font-size:0.7rem; color:#475569;">TalentBridge © 2026</div>
+        </aside>
+
+        <main class="main-content">
+            <section id="home" class="page active">
+                <div class="welcome-section">
+                    <span class="hero-badge">TalentBridge Platformasi</span>
+                    <h1>Xush kelibsiz, <br> ZUKKO o'quvchi!</h1>
+                    <p>Sizning mahoratingiz va imkoniyatlaringiz o'rtasidagi ko'prik.</p>
+                    <div style="display:flex; gap:30px; margin-top:2rem;">
+                        <div><strong style="font-size:2rem; display:block;">15</strong> <span>Yangiliklar</span></div>
+                        <div><strong style="font-size:2rem; display:block;">#3</strong> <span>Reytingda</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="news" class="page">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap: wrap; gap: 15px;">
+                    <h2>Yangiliklar & Grantlar</h2>
+                    <div class="search-box" style="width:300px;"><input type="text" placeholder="Qidiruv..." onkeyup="searchNews(this.value)"></div>
+                </div>
+                <div class="news-grid" id="news-container"></div>
+            </section>
+
+            <section id="rating" class="page">
+                <h2 style="margin-bottom:1.5rem;">O'quvchilar Reytingi</h2>
+                <div class="filter-panel">
+                    <select id="reg-sel" onchange="updateDists(this.value)">
+                        <option value="all">Barcha Viloyatlar</option>
+                        <option value="Qoraqalpog'iston">Qoraqalpog'iston</option>
+                        <option value="Toshkent">Toshkent</option>
+                    </select>
+                    <select id="dist-sel" onchange="renderTable()">
+                        <option value="all">Barcha Tumanlar</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>O'rin</th><th>Ism-sharif</th><th>Hudud</th><th>Natija</th></tr></thead>
+                        <tbody id="rating-list"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="profile" class="page">
+                <div class="profile-container">
+                    <div class="profile-header-card">
+                        <div class="profile-img-large">EA</div>
+                        <div class="profile-info">
+                            <h2>Elbek Abdurahmonov</h2>
+                            <p><i data-lucide="map-pin" style="width:16px;"></i> Amudaryo tumani, Qoraqalpog'iston</p>
+                            <div style="margin-top:10px; display:flex; gap:10px; justify-content: center; flex-wrap: wrap;">
+                                <span style="background:#eef2ff; color:#4f46e5; padding:4px 12px; border-radius:8px; font-size:0.75rem; font-weight:700;">8-SINF</span>
+                                <span style="background:#f0fdf4; color:#16a34a; padding:4px 12px; border-radius:8px; font-size:0.75rem; font-weight:700;">PRO USER</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats-grid">
+                        <div class="p-stat-card">
+                            <i data-lucide="medal"></i>
+                            <label>Reytingdagi o'rin</label>
+                            <strong>#3</strong>
+                        </div>
+                        <div class="p-stat-card">
+                            <i data-lucide="zap"></i>
+                            <label>Jami ballar</label>
+                            <strong>2750</strong>
+                        </div>
+                        <div class="p-stat-card">
+                            <i data-lucide="check-circle"></i>
+                            <label>Ishtiroklar</label>
+                            <strong>12 ta</strong>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:2rem; background:white; padding:2rem; border-radius:30px; border:1px solid #e2e8f0;">
+                        <h4 style="margin-bottom:15px;">TalentBridge Ma'lumotlari</h4>
+                        <p style="color:#64748b; font-size:0.9rem; line-height:1.6;">Siz hozirda platformamizning eng faol foydalanuvchilaridan birisiz. Reytingda yuqorilash uchun yangi olimpiadalarda qatnashing!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const newsData = [
+            { id: 1, title: "Matematika: TalentBridge Cup", img: "https://picsum.photos/seed/t1/400/250" },
+            { id: 2, title: "English Grammar Mastery", img: "https://picsum.photos/seed/t2/400/250" },
+            { id: 3, title: "IT Junior Hackathon 2026", img: "https://picsum.photos/seed/t3/400/250" },
+            { id: 4, title: "Fizika yosh iqtidorlari", img: "https://picsum.photos/seed/t4/400/250" },
+            { id: 5, title: "Robototexnika Musobaqasi", img: "https://picsum.photos/seed/t5/400/250" },
+            { id: 6, title: "Kimyo: Yosh Laborant", img: "https://picsum.photos/seed/t6/400/250" },
+            { id: 7, title: "Python Grant kursi", img: "https://picsum.photos/seed/t7/400/250" },
+            { id: 8, title: "Grafik Dizayn Masterclass", img: "https://picsum.photos/seed/t8/400/250" },
+            { id: 9, title: "Astronomiya sirlari", img: "https://picsum.photos/seed/t9/400/250" },
+            { id: 10, title: "Prezident Granti - IT", img: "https://picsum.photos/seed/t10/400/250" },
+            { id: 11, title: "Startup tanlovi", img: "https://picsum.photos/seed/t11/400/250" },
+            { id: 12, title: "Yosh Iqtisodchi", img: "https://picsum.photos/seed/t12/400/250" },
+            { id: 13, title: "Frontend Development", img: "https://picsum.photos/seed/t13/400/250" },
+            { id: 14, title: "Ona tili va adabiyot", img: "https://picsum.photos/seed/t14/400/250" },
+            { id: 15, title: "Kiberxavfsizlik asoslari", img: "https://picsum.photos/seed/t15/400/250" }
+        ];
+
+        const students = [
+            { r: 1, n: "Jasur Ismoilov", v: "Qoraqalpog'iston", t: "Amudaryo", b: 2850 },
+            { r: 2, n: "Madina Toirova", v: "Toshkent", t: "Chilonzor", b: 2790 },
+            { r: 3, n: "Elbek Abdurahmonov", v: "Qoraqalpog'iston", t: "Amudaryo", b: 2750 },
+            { r: 4, n: "Sardor Azimov", v: "Qoraqalpog'iston", t: "Nukus", b: 2680 },
+            { r: 5, n: "Guli Karimova", v: "Toshkent", t: "Yunusobod", b: 2610 },
+            { r: 6, n: "Azizbek Tursunov", v: "Qoraqalpog'iston", t: "Beruniy", b: 2550 },
+            { r: 7, n: "Nigora Aliyeva", v: "Toshkent", t: "Mirobod", b: 2500 },
+            { r: 8, n: "Dilshod Odilov", v: "Qoraqalpog'iston", t: "To'rtko'l", b: 2480 },
+            { r: 9, n: "Sevara Omonova", v: "Qoraqalpog'iston", t: "Xo'jayli", b: 2420 },
+            { r: 10, n: "Bekzod Rahmonov", v: "Toshkent", t: "Uchtepa", b: 2390 }
+        ];
+
+        const dists = {
+            "Qoraqalpog'iston": ["Amudaryo", "Nukus", "Beruniy", "To'rtko'l", "Xo'jayli"],
+            "Toshkent": ["Chilonzor", "Yunusobod", "Mirobod", "Uchtepa"]
+        };
+
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('n-' + id).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function renderNews(data = newsData) {
+            const container = document.getElementById('news-container');
+            container.innerHTML = data.map(n => `
+                <div class="news-card" onclick="openModal('${n.title}', '${n.img}')">
+                    <img src="${n.img}">
+                    <h3>${n.title}</h3>
+                </div>
+            `).join('');
+        }
+
+        function searchNews(v) {
+            const f = newsData.filter(n => n.title.toLowerCase().includes(v.toLowerCase()));
+            renderNews(f);
+        }
+
+        function updateDists(v) {
+            const sel = document.getElementById('dist-sel');
+            sel.innerHTML = '<option value="all">Barcha Tumanlar</option>';
+            if(dists[v]) dists[v].forEach(d => sel.innerHTML += `<option value="${d}">${d}</option>`);
+            renderTable();
+        }
+
+        function renderTable() {
+            const v = document.getElementById('reg-sel').value;
+            const t = document.getElementById('dist-sel').value;
+            let filtered = students;
+            if(v !== 'all') filtered = filtered.filter(s => s.v === v);
+            if(t !== 'all') filtered = filtered.filter(s => s.t === t);
+            
+            document.getElementById('rating-list').innerHTML = filtered.map(s => {
+                let rankClass = s.r <= 3 ? `rank-${s.r}` : '';
+                return `
+                    <tr class="${rankClass}">
+                        <td><div class="rank-badge">${s.r}</div></td>
+                        <td><strong>${s.n}</strong></td>
+                        <td style="color:#64748b; font-size:0.85rem;">${s.v}, ${s.t}</td>
+                        <td style="font-weight:800; color:var(--primary); font-size:1.1rem;">${s.b}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openModal(t, i) {
+            document.getElementById('modal-body').innerHTML = `
+                <img src="${i}" style="width:100%; border-radius:20px; margin-bottom:15px;">
+                <h2 style="font-size:1.5rem; margin-bottom:10px;">${t}</h2>
+                <p style="color:#64748b; line-height:1.6;">TalentBridge platformasidagi ushbu imkoniyat bo'yicha ro'yxatdan o'tish yaqin kunlarda ochiladi. Tayyor turing!</p>
+            `;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        window.onload = () => { 
+            lucide.createIcons(); 
+            renderNews(); 
+            renderTable(); 
+        };
+    </script>
+</body>
+</html>
